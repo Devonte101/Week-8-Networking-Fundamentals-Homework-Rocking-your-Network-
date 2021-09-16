@@ -28,9 +28,9 @@ Provide the following for each phase:
 - Recommend to restrict allowing ICMP echo requests against IP 167.172.144.11 to prevent successful responses from PING requests.  
   **_`sudo traceroute -I 167.172.144.11`_**  
   **_`[sudo] password for sysadmin:`_**  
+  **_`traceroute to 167.172.144.11 (167.172.144.11), 30 hops max, 60 byte packets`_**  
   ```
-  traceroute to 167.172.144.11 (167.172.144.11), 30 hops max, 60 byte packets  
-  1 _gateway (10.0.2.2)  0.179 ms  0.145 ms  0.139 ms  
+    1 _gateway (10.0.2.2)  0.179 ms  0.145 ms  0.139 ms  
   2 192.168.1.1 (192.168.1.1)  3.244 ms  3.389 ms  3.390 ms  
   3 99.244.170.1 (99.244.170.1)  16.349 ms  16.398 ms  19.034 ms  
   4 69.63.243.49 (69.63.243.49)  19.054 ms  26.582 ms  26.603 ms  
@@ -57,80 +57,79 @@ Provide the following for each phase:
  
 ### Phase 2:  *"Some `Syn` for Nothin"*  
 
-- **_`sudo nmap -sS 167.172.144.11/32`_**
+- **_`sudo nmap -sS 167.172.144.11/32`_**  
 ![nmap 167](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/3%20-%201%20nmap%20167.PNG)
 
-Port 22 is accepting connections.
-●	This occurred on the transport layer as SYN uses TCP which is connection-oriented on the Network Layer number 4.
-Phase 3: "I Feel a DNS Change Comin' On"
-●	To login ssh jimi@167.172.144.11 -22
+  **_`Port 22 is accepting connections.`_**  
+
+- This occurred on the transport layer as SYN uses **_`TCP which is connection-oriented on the Network Layer number 4.`_**  
+
+### Phase 3: "I Feel a `DNS` Change Comin' On"  
+- To login **_`ssh jimi@167.172.144.11 -22`_**  
+![login with ssh](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/4%20-%201%20login%20with%20ssh.PNG)  
+
+   **_`ping rollingstone.com`_**  
+   ![ping rollingstone.com](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/4%20-%202%20ping%20rollingstone-com.PNG)    
+   **_`sudo nano hosts`_**  
+   ![nano hosts error](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/4%20-%203%20nano%20hosts%20error.PNG)  
+   
+   **_`nano hosts`_**  
+   ![nano of hosts](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/4%20-%204%20nano%20of%20hosts.PNG)  
+   
+**add to the file ---> _`98.137.246.8	rollingstone.com`_**
+
+   **_`nslookup`_**  
+    ![nslookup](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/4%20-%205%20nslookup.PNG)  
+    ![nslookup](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/4%20-%205-2%20nslookup.PNG)  
+    
+**_`This occurred on the application layer as DNS runs in parallel to HTTP in the Application Layer (layer 7). DNS is in effect an application that is invoked to help out the HTTP application, and therefore does not sit "below" HTTP in the OSI stack.`_**  
+
+### Phase 4:  "Sh`ARP` Dressed Man"  
+
+The file left by hacker was in the etc folder: **_`packetcaptureinfo.txt`_**  
+  **_`cat packetcaptureinfo.txt`_**  
+  ![cat the file packetcaptureinfo](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/5%20-%201%20cat%20the%20file%20packetcaptureinfo.PNG)  
  
-ping rollingstone.com
- 
-		
+**_From the Firefox web browser downloaded the file: secretlogs.pcapng file._**  
+**_Opened in Wireshark._**  
+  ![Wireshark of the file secretlogs](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/5%20-%202%20Wireshark%20of%20the%20file%20secretlogs.PNG)  
+  
+**_Filtered the ARP_**  
+  ![arp](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/5-4%20ARP.png)  
+  
+**_Looking at the ARP filters request is made for the 192.168.47.1 in line one, and response on line 4 is showing the correct MAC address 00:0c:29:0f:71:a3_**  
+  ![ARP for line](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/5%20-%203%20ARP%20for%20line%204.PNG)  
+  
+**_On line 5 the hacker has provided another MAC address 00:0c:29:1d:b3:b1 which is a spoofed MAC address to get the access._**  
+  ![ARP for line 5](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/5%20-%203-1%20ARP%20for%20line%205.PNG)  
+  
+**_Filtered http:_**  
+  ![filtered http](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/5%20-%205%20filtered%20http.PNG)  
+  
+**_Looking at the info of the http traffic it all looks ok until line 16 where the POST from the hacker is on the website._**
+**_`HTML Form URL Encoded: application/x-www-form-urlencoded`_**  
+    ```  
+    Form item: "0<text>" = "Mr Hacker"  
+    Form item: "0<label>" = "Name"  
+    Form item: "1<text>" = "Hacker@rockstarcorp.com"  
+    Form item: "1<label>" = "Email"  
+    Form item: "2<text>" = ""  
+    Form item: "2<label>" = "Phone"  
+    Form item: "3<textarea>" = "Hi Got The Blues Corp!  This is a hacker that works at Rock Star Corp.  Rock Star has left port 22, SSH open if you want to hack in.  For 1 Milliion Dollars I will provide you the user and password!"  
+    Form item: "3<label>" = "Message"  
+    Form item: "redirect" = "http://www.gottheblues.yolasite.com/contact-us.php?formI660593e583e747f1a91a77ad0d3195e3Posted=true"  
+    Form item: "locale" = "en"  
+    Form item: "redirect_fail" = "http://www.gottheblues.yolasite.com/contact-us.php?formI660593e583e747f1a91a77ad0d3195e3Posted=false"  
+    Form item: "form_name" = ""  
+    Form item: "site_name" = "GottheBlues"  
+    Form item: "wl_site" = "0"  
+    Form item: "destination" = "DQvFymnIKN6oNo284nIPnKyVFSVKDX7O5wpnyGVYZ_YSkg==:3gjpzwPaByJLFcA2ouelFsQG6ZzGkhh31_Gl2mb5PGk="  
+    Form item: "g-recaptcha-response" = "03AOLTBLQA9oZg2Lh3adsE0c7OrYkMw1hwPof8xGnYIsZh8cz5TtLwl8uDMZuVOls6duzyYq2MTzsVHYzKda77dqzzNUwpa6F5Tu6b9875yKU1wZHpfOQmV8D7OTcx2rnGD6I8s-6qvyDAjCuS6vA78-iNLNUtWZXFJwleNj3hPquVMu-yzcSOX60Y-deZC8zXn8hu4c6u  
+    ```
 
-sudo nano hosts
- 
-		nano hosts
- 
-add to the file ---> 98.137.246.8	rollingstone.com
+  ![hacker at http](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Images/5%20-%205-2%20hacker%20at%20http.PNG)  
 
-
-
-
-
-
-		nslookup
- 
- 
-This occurred on the application layer as DNS runs in parallel to HTTP in the Application Layer (layer 7). DNS is in effect an application that is invoked to help out the HTTP application, and therefore does not sit "below" HTTP in the OSI stack.
-
-
-
-
-Phase 4:  "ShARP Dressed Man"
-The file left by hacker was in the etc folder: packetcaptureinfo.txt
-cat packetcaptureinfo.txt
- 
-From the Firefox web browser downloaded the file: secretlogs.pcapng file.
-Opened in Wireshark.
- 
-Filtered the ARP
- 
-
-
-
-
-
-
-
-Looking at the ARP filters request is made for the 192.168.47.1 in line one, and response on line 4 is showing the correct MAC address 00:0c:29:0f:71:a3
- 
-On line 5 the hacker has provided another MAC address 00:0c:29:1d:b3:b1 which is a spoofed MAC address to get the access.
- 
-Filtered http:
- 
-Looking at the info of the http traffic it all looks ok until line 16 where the POST from the hacker is on the website.
-HTML Form URL Encoded: application/x-www-form-urlencoded
-    Form item: "0<text>" = "Mr Hacker"
-    Form item: "0<label>" = "Name"
-    Form item: "1<text>" = "Hacker@rockstarcorp.com"
-    Form item: "1<label>" = "Email"
-    Form item: "2<text>" = ""
-    Form item: "2<label>" = "Phone"
-    Form item: "3<textarea>" = "Hi Got The Blues Corp!  This is a hacker that works at Rock Star Corp.  Rock Star has left port 22, SSH open if you want to hack in.  For 1 Milliion Dollars I will provide you the user and password!"
-    Form item: "3<label>" = "Message"
-    Form item: "redirect" = "http://www.gottheblues.yolasite.com/contact-us.php?formI660593e583e747f1a91a77ad0d3195e3Posted=true"
-    Form item: "locale" = "en"
-    Form item: "redirect_fail" = "http://www.gottheblues.yolasite.com/contact-us.php?formI660593e583e747f1a91a77ad0d3195e3Posted=false"
-    Form item: "form_name" = ""
-    Form item: "site_name" = "GottheBlues"
-    Form item: "wl_site" = "0"
-    Form item: "destination" = "DQvFymnIKN6oNo284nIPnKyVFSVKDX7O5wpnyGVYZ_YSkg==:3gjpzwPaByJLFcA2ouelFsQG6ZzGkhh31_Gl2mb5PGk="
-    Form item: "g-recaptcha-response" = "03AOLTBLQA9oZg2Lh3adsE0c7OrYkMw1hwPof8xGnYIsZh8cz5TtLwl8uDMZuVOls6duzyYq2MTzsVHYzKda77dqzzNUwpa6F5Tu6b9875yKU1wZHpfOQmV8D7OTcx2rnGD6I8s-6qvyDAjCuS6vA78-iNLNUtWZXFJwleNj3hPquVMu-yzcSOX60Y-deZC8zXn8hu4c6u
-
- 
-This occurred on the application layer as the input on the website is used on the Application Layer 7.
+**_`This occurred on the application layer as the input on the website is used on the Application Layer 7.`_**
 
 ---
 
