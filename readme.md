@@ -225,7 +225,7 @@ For example:
 
 Refer to the following solution files for the homework worksheets: 
 
-* [Week 8 Homework Solution: Rocking your Network!](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Networking%20Fundamentals%20Homework_%20Rocking%20your%20Network!.docx)  
+* [Week 8 Homework Solution: Rocking your Network!](https://github.com/karma-786/Week-8-Networking-Fundamentals-Homework-Rocking-your-Network-/blob/main/Networking%20Fundamentals%20Homework_%20Rocking%20your%20Network!.md)  
 
 ---
 © 2020 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
